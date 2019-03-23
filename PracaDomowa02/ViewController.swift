@@ -13,6 +13,8 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     var visibleBuildings = [BuildingView]()
     var buildingsOnTheLeft = [BuildingView]()
     var myMoon = UIView()
+    var moonX : CGFloat = 0.0
+    var moonY : CGFloat = 0.0
     
     func loadBuildings(){
         var moveBy = 0.0
@@ -55,6 +57,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         scrollView.backgroundColor = UIColor.darkGray
         loadBuildings()
         
+        let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(longGestureFunc))
         let moon = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
         moon.center.x = (self.view.bounds.width * 1.5) + 100
         moon.center.y = 100
@@ -63,8 +66,38 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         moon.alpha = 1.0
         myMoon = moon
         scrollView.addSubview(moon)
+        moon.addGestureRecognizer(longGesture)
     }
     
+    @objc func longGestureFunc(_ tap: UILongPressGestureRecognizer) {
+        if let kulka = tap.view
+        {
+            if tap.state == .began
+            {
+                animation(myBall: kulka, scale: 1.2, alpha: 0.6 ,duration: 0.3)
+            }
+            
+            if tap.state == .changed
+            {
+                kulka.center.x =  tap.location(in: scrollView).x - tap.location(in: kulka).x + (1/2)*kulka.bounds.height
+                kulka.center.y =  tap.location(in: scrollView).y - tap.location(in: kulka).y + (1/2)*kulka.bounds.height
+                //view.bringSubviewToFront(kulka)
+                moonX = tap.location(in: view).x
+                moonY = tap.location(in: view).y
+            }
+            if tap.state == .ended
+            {
+                animation(myBall: kulka, scale: 1 , alpha: 1.0, duration: 0.3)
+            }
+        }
+    }
+    private func animation(myBall : UIView, scale: CGFloat, alpha: CGFloat, duration: TimeInterval)
+    {
+        UIView.animate(withDuration: duration, animations: {
+            myBall.alpha = alpha
+            myBall.transform = CGAffineTransform(scaleX: scale, y: scale)
+        })
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -119,9 +152,19 @@ class ViewController: UIViewController, UIScrollViewDelegate {
                 scrollView.contentOffset.x = self.view.bounds.width * 1.5
             }
         }
+        if moonX != 0.0 && moonY != 0.0
+        {
+         myMoon.center.x = scrollView.contentOffset.x + moonX
+         myMoon.center.y = scrollView.contentOffset.y + moonY
+        }
+        else
+        {
+            myMoon.center.x = scrollView.contentOffset.x + 100
+            myMoon.center.y = scrollView.contentOffset.y + 100
+        }
         
-        myMoon.center.x = scrollView.contentOffset.x + 100
-        myMoon.center.y = scrollView.contentOffset.y + 100
+        
+        
             //addNewBuilding(side: "Left")
 
             
