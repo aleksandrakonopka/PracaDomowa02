@@ -12,6 +12,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var scrollView: UIScrollView!
     var visibleBuildings = [BuildingView]()
     var buildingsOnTheLeft = [BuildingView]()
+    var myMoon = UIView()
     
     func loadBuildings(){
         var moveBy = 0.0
@@ -53,6 +54,15 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         scrollView.contentOffset.x = 1.5 * self.view.bounds.width
         scrollView.backgroundColor = UIColor.darkGray
         loadBuildings()
+        
+        let moon = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
+        moon.center.x = (self.view.bounds.width * 1.5) + 100
+        moon.center.y = 100
+        moon.backgroundColor = UIColor.red
+        moon.layer.cornerRadius = 100 * 0.5
+        moon.alpha = 1.0
+        myMoon = moon
+        scrollView.addSubview(moon)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -109,6 +119,9 @@ class ViewController: UIViewController, UIScrollViewDelegate {
                 scrollView.contentOffset.x = self.view.bounds.width * 1.5
             }
         }
+        
+        myMoon.center.x = scrollView.contentOffset.x + 100
+        myMoon.center.y = scrollView.contentOffset.y + 100
             //addNewBuilding(side: "Left")
 
             
