@@ -11,7 +11,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     
     @IBOutlet weak var scrollView: UIScrollView!
     var visibleBuildings = [BuildingView]()
-    
+    var buildingsOnTheLeft = [BuildingView]()
     
     func loadBuildings(){
         var moveBy = 0.0
@@ -28,20 +28,40 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             allBuildingsWidth = allBuildingsWidth + Double(building.frame.width)
         }
     }
-    func addNewBuilding(x: CGFloat, side: String)
+    func addNewBuilding(side: String)
     {
         print("Dodaje element")
         let building = BuildingView.randomBuilding()
         if side == "Right"
         {
-        building.center = CGPoint(x: x + (building.frame.width/2), y: self.view.bounds.height - (building.frame.height/2))
+            var distanceFromCenter = 0.0
+            for element in visibleBuildings
+            {
+                distanceFromCenter = distanceFromCenter +  Double(element.frame.width)
+            }
+            
+        building.center = CGPoint(x: CGFloat(distanceFromCenter) + self.view.bounds.width * 1.5 + (building.frame.width/2), y: self.view.bounds.height - (building.frame.height/2))
+            visibleBuildings.append(building)
         }
         else
         {
-          building.center = CGPoint(x: x - (building.frame.width/2), y: self.view.bounds.height - (building.frame.height/2))
+            var distanceFromCenter = 0.0
+            for element in buildingsOnTheLeft
+            {
+                distanceFromCenter = distanceFromCenter +  Double(element.frame.width)
+            }
+            print("Visible frame min \(visibleBuildings[0].frame.minX)")
+            print("Srodek \(self.view.bounds.width * 1.5)")
+            var krawedzPrawychLubSrodek = self.view.bounds.width * 1.5
+            if(visibleBuildings.count > 0)
+            {
+                krawedzPrawychLubSrodek = visibleBuildings[0].frame.minX
+            }
+
+          building.center = CGPoint(x: krawedzPrawychLubSrodek - (building.frame.width/2) - CGFloat(distanceFromCenter), y: self.view.bounds.height - (building.frame.height/2))
+            buildingsOnTheLeft.append(building)
         }
         scrollView.addSubview(building)
-        visibleBuildings.append(building)
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +70,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         scrollView.bounds = .zero
         scrollView.isPagingEnabled = true
         scrollView.contentOffset.x = 1.5 * self.view.bounds.width
+        scrollView.backgroundColor = UIColor.darkGray
         loadBuildings()
     }
     
@@ -61,18 +82,17 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print(scrollView.contentOffset)
         if visibleBuildings.count > 0{
-            var distanceFromCenter = 0.0
-            for element in visibleBuildings
-            {
-//                if element == visibleBuildings.first
-//                {
-//                    distanceFromCenter = distanceFromCenter + Double((1/2) * element.frame.width)
-//                }
-//            else{
-             distanceFromCenter = distanceFromCenter +  Double(element.frame.width)
-//                }
-            }
-        addNewBuilding(x: CGFloat(distanceFromCenter) + self.view.bounds.width * 1.5  , side: "Right")
+//            var distanceFromCenter = 0.0
+//            for element in visibleBuildings
+//            {
+//             distanceFromCenter = distanceFromCenter +  Double(element.frame.width)
+//            }
+            
+       // addNewBuilding(x: CGFloat(distanceFromCenter) + self.view.bounds.width * 1.5  , side: "Right")
+            //print(visibleBuildings.count)
+            // CGFloat(self.view.bounds.width * 3.0) + self.view.bounds.width * 1.5
+       // addNewBuilding(side: "Right")
+            
 //        if scrollView.contentOffset.x < 200
 //        {
 //        //usuwanie ostatniego budynku ( po prawej stronie )
@@ -80,6 +100,27 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 //        visibleBuildings.remove(at: visibleBuildings.count-1)
 //            print("Ostatni usuniety")
 //        }
+            
+            if true {
+           var firstBuildingWidth = visibleBuildings[0].frame.width
+            if scrollView.contentOffset.x >= self.view.bounds.width * 1.5 + firstBuildingWidth
+            {
+             addNewBuilding(side: "Right")
+             visibleBuildings[0].removeFromSuperview()
+             visibleBuildings.remove(at:0)
+             for building in visibleBuildings
+             {
+                building.center.x = building.center.x - firstBuildingWidth
+            }
+            scrollView.contentOffset.x = self.view.bounds.width * 1.5
+            }
+            }
+            
+
+            
+            
+            
+            //addNewBuilding(side: "Left")
 //        if scrollView.contentOffset.x > 700
 //        {
 //            //usuwanie pierwszego budynku ( po lewej stronie )
