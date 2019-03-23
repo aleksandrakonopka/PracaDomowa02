@@ -66,7 +66,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         let moon = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
         moon.center.x = 600
         moon.center.y = 100
-        moon.backgroundColor = UIColor.red
+        moon.backgroundColor = UIColor.white
         moon.layer.cornerRadius = 100 * 0.5
         moon.alpha = 1.0
         myMoon = moon
@@ -93,6 +93,16 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             if tap.state == .ended
             {
                 animation(myBall: kulka, scale: 1 , alpha: 1.0, duration: 0.3)
+                if scrollView.backgroundColor == UIColor.darkGray && kulka.backgroundColor == UIColor.white
+                {
+                scrollView.backgroundColor = UIColor.blue
+                kulka.backgroundColor = UIColor.yellow
+                }
+                else
+                {
+                 scrollView.backgroundColor = UIColor.darkGray
+                 kulka.backgroundColor = UIColor.white
+                }
             }
         }
     }
