@@ -15,20 +15,25 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     var myMoon = UIView()
     var moonX : CGFloat = 0.0
     var moonY : CGFloat = 0.0
+    var howManyBuildingsToFill = 10
+    var ready = false
     
     func loadBuildings(){
         var moveBy = 0.0
         var allBuildingsWidth = 0.0
+        howManyBuildingsToFill = 0
         // dodaje tyle budynków ile będzie widoczne na ekranie device
-        while allBuildingsWidth - 250 < Double(UIScreen.main.bounds.width)
+        while allBuildingsWidth  < Double(UIScreen.main.bounds.width)
         {
             let building = BuildingView.randomBuilding()
-            building.center = CGPoint(x: CGFloat(moveBy) + (self.view.bounds.width * 1.5) + (building.frame.width/2) - 100, y: self.view.bounds.height - (building.frame.height/2))
+            building.center = CGPoint(x: CGFloat(moveBy) + (500) + (building.frame.width/2), y: self.view.bounds.height - (building.frame.height/2))
 
             moveBy = moveBy + Double(building.frame.width)
             scrollView.addSubview(building)
             visibleBuildings.append(building)
             allBuildingsWidth = allBuildingsWidth + Double(building.frame.width)
+            howManyBuildingsToFill += 1
+            
         }
     }
     func addNewBuilding(side: String)
@@ -53,13 +58,13 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         scrollView.contentSize = CGSize(width: self.view.bounds.width * 3.0, height: 1.1 * self.view.bounds.height)
         scrollView.bounds = .zero
         scrollView.isPagingEnabled = true
-        scrollView.contentOffset.x = 1.5 * self.view.bounds.width
+        scrollView.contentOffset.x = 500
         scrollView.backgroundColor = UIColor.darkGray
         loadBuildings()
-        
+        ready = true
         let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(longGestureFunc))
         let moon = UIView(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
-        moon.center.x = (self.view.bounds.width * 1.5) + 100
+        moon.center.x = 600
         moon.center.y = 100
         moon.backgroundColor = UIColor.red
         moon.layer.cornerRadius = 100 * 0.5
@@ -107,31 +112,81 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         print(scrollView.contentOffset)
         if visibleBuildings.count > 0{
 
-            var firstBuildingWidth = visibleBuildings[0].frame.width
-            if scrollView.contentOffset.x >= self.view.bounds.width * 1.5 + firstBuildingWidth
-            {
-             addNewBuilding(side: "Right")
-             visibleBuildings[0].removeFromSuperview()
-             visibleBuildings.remove(at:0)
-             for building in visibleBuildings
-             {
-                building.center.x = building.center.x - firstBuildingWidth
-            }
-            scrollView.contentOffset.x = self.view.bounds.width * 1.5
-            }
+//            var firstBuildingWidth = visibleBuildings[0].frame.width
+//            if scrollView.contentOffset.x >= self.view.bounds.width * 1.5 + firstBuildingWidth
+//            {
+//             addNewBuilding(side: "Right")
+//             visibleBuildings[0].removeFromSuperview()
+//             visibleBuildings.remove(at:0)
+//             for building in visibleBuildings
+//             {
+//                building.center.x = building.center.x - firstBuildingWidth
+//            }
+//            scrollView.contentOffset.x = self.view.bounds.width * 1.5
+//            }
+//
+//            var lastBuildingWidth = visibleBuildings.last!.frame.width
+//            if scrollView.contentOffset.x <= self.view.bounds.width * 1.5 - lastBuildingWidth
+//            {
+//                addNewBuilding(side: "Left")
+//                visibleBuildings.last!.removeFromSuperview()
+//                visibleBuildings.removeLast()
+//                for building in visibleBuildings
+//                {
+//                    building.center.x = building.center.x + lastBuildingWidth
+//                }
+//                scrollView.contentOffset.x = self.view.bounds.width * 1.5
+//            }
             
-            var lastBuildingWidth = visibleBuildings.last!.frame.width
-            if scrollView.contentOffset.x <= self.view.bounds.width * 1.5 - lastBuildingWidth
+            if scrollView.contentOffset.x < visibleBuildings.first!.frame.minX && ready
             {
+                print("Dodać element po lewej")
                 addNewBuilding(side: "Left")
+                //scrollView.contentOffset.x = 500
+//                var odlegloscOd500 : CGFloat = 0
+//                for building in visibleBuildings
+//                {
+//                    building.center.x =  500 + (building.frame.width/2) + odlegloscOd500
+//                    odlegloscOd500 += building.frame.width
+//                }
+                let moveBy = visibleBuildings[0].center.x.distance(to: 500 + (visibleBuildings[0].frame.width / 2))
+                visibleBuildings.forEach { (bld) in
+                    bld.center.x += moveBy
+                }
+                scrollView.contentOffset.x += moveBy
+                
+            }
+            if scrollView.contentOffset.x > visibleBuildings.first!.frame.maxX /*&& visibleBuildings.count > howManyBuildingsToFill*/
+            {
+                print("Usunąć element po lewej")
+                visibleBuildings.first!.removeFromSuperview()
+                visibleBuildings.removeFirst()
+            }
+            if scrollView.contentOffset.x + self.view.bounds.width >= visibleBuildings.last!.frame.maxX && ready
+            {
+                print("Dodać element po prawej")
+                addNewBuilding(side: "Right")
+                //scrollView.contentOffset.x = 500
+//                var odlegloscOd500 : CGFloat = 0
+//                for building in visibleBuildings
+//                {
+//                    building.center.x =  500 + (building.frame.width/2) + odlegloscOd500
+//                    odlegloscOd500 += building.frame.width
+//                }
+                let moveBy = visibleBuildings[0].center.x.distance(to: 500 + (visibleBuildings[0].frame.width / 2))
+                visibleBuildings.forEach { (bld) in
+                    bld.center.x += moveBy
+                }
+                scrollView.contentOffset.x += moveBy
+            }
+            if scrollView.contentOffset.x + self.view.bounds.maxX < visibleBuildings.last!.frame.minX /*&& visibleBuildings.count > howManyBuildingsToFill*/
+            {
+                print("Usunąć element po prawej")
                 visibleBuildings.last!.removeFromSuperview()
                 visibleBuildings.removeLast()
-                for building in visibleBuildings
-                {
-                    building.center.x = building.center.x + lastBuildingWidth
-                }
-                scrollView.contentOffset.x = self.view.bounds.width * 1.5
             }
+            print("OffsetX: \(scrollView.contentOffset.x) boundsmaxX: \(self.view.bounds.maxX)")
+            print("How many to fill: \(howManyBuildingsToFill)")
         }
         print(visibleBuildings.count)
         if moonX != 0.0 && moonY != 0.0
