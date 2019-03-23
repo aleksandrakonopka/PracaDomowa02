@@ -20,10 +20,10 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         var moveBy = 0.0
         var allBuildingsWidth = 0.0
         // dodaje tyle budynków ile będzie widoczne na ekranie device
-        while allBuildingsWidth < Double(UIScreen.main.bounds.width)
+        while allBuildingsWidth - 250 < Double(UIScreen.main.bounds.width)
         {
             let building = BuildingView.randomBuilding()
-            building.center = CGPoint(x: CGFloat(moveBy) + (self.view.bounds.width * 1.5) + (building.frame.width/2), y: self.view.bounds.height - (building.frame.height/2))
+            building.center = CGPoint(x: CGFloat(moveBy) + (self.view.bounds.width * 1.5) + (building.frame.width/2) - 100, y: self.view.bounds.height - (building.frame.height/2))
 
             moveBy = moveBy + Double(building.frame.width)
             scrollView.addSubview(building)
@@ -50,7 +50,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.delegate = self
-        scrollView.contentSize = CGSize(width: self.view.bounds.width * 3.0, height: self.view.bounds.height)
+        scrollView.contentSize = CGSize(width: self.view.bounds.width * 3.0, height: 1.1 * self.view.bounds.height)
         scrollView.bounds = .zero
         scrollView.isPagingEnabled = true
         scrollView.contentOffset.x = 1.5 * self.view.bounds.width
@@ -81,7 +81,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             {
                 kulka.center.x =  tap.location(in: scrollView).x - tap.location(in: kulka).x + (1/2)*kulka.bounds.height
                 kulka.center.y =  tap.location(in: scrollView).y - tap.location(in: kulka).y + (1/2)*kulka.bounds.height
-                //view.bringSubviewToFront(kulka)
+                view.bringSubviewToFront(kulka)
                 moonX = tap.location(in: view).x
                 moonY = tap.location(in: view).y
             }
@@ -106,26 +106,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print(scrollView.contentOffset)
         if visibleBuildings.count > 0{
-//            var distanceFromCenter = 0.0
-//            for element in visibleBuildings
-//            {
-//             distanceFromCenter = distanceFromCenter +  Double(element.frame.width)
-//            }
-            
-       // addNewBuilding(x: CGFloat(distanceFromCenter) + self.view.bounds.width * 1.5  , side: "Right")
-            //print(visibleBuildings.count)
-            // CGFloat(self.view.bounds.width * 3.0) + self.view.bounds.width * 1.5
-       // addNewBuilding(side: "Right")
-            
-//        if scrollView.contentOffset.x < 200
-//        {
-//        //usuwanie ostatniego budynku ( po prawej stronie )
-//        visibleBuildings[visibleBuildings.count-1].removeFromSuperview()
-//        visibleBuildings.remove(at: visibleBuildings.count-1)
-//            print("Ostatni usuniety")
-//        }
-            
-            if true {
+
             var firstBuildingWidth = visibleBuildings[0].frame.width
             if scrollView.contentOffset.x >= self.view.bounds.width * 1.5 + firstBuildingWidth
             {
@@ -138,7 +119,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             }
             scrollView.contentOffset.x = self.view.bounds.width * 1.5
             }
-            }
+            
             var lastBuildingWidth = visibleBuildings.last!.frame.width
             if scrollView.contentOffset.x <= self.view.bounds.width * 1.5 - lastBuildingWidth
             {
@@ -152,6 +133,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
                 scrollView.contentOffset.x = self.view.bounds.width * 1.5
             }
         }
+        print(visibleBuildings.count)
         if moonX != 0.0 && moonY != 0.0
         {
          myMoon.center.x = scrollView.contentOffset.x + moonX
@@ -163,21 +145,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             myMoon.center.y = scrollView.contentOffset.y + 100
         }
         
-        
-        
-            //addNewBuilding(side: "Left")
 
-            
-            
-            
-            //addNewBuilding(side: "Left")
-//        if scrollView.contentOffset.x > 700
-//        {
-//            //usuwanie pierwszego budynku ( po lewej stronie )
-//        visibleBuildings[0].removeFromSuperview()
-//        visibleBuildings.remove(at:0)
-//            print("Pierwszy usuniety")
-//        }
             
         }
     }
