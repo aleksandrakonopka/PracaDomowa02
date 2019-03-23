@@ -45,21 +45,44 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         }
         else
         {
-            var distanceFromCenter = 0.0
-            for element in buildingsOnTheLeft
+            building.center = CGPoint(x:  visibleBuildings[0].frame.minX - (building.frame.width/2), y: self.view.bounds.height - (building.frame.height/2))
+         // gdy dodaje po lewej stronie chce aby pierwszy po lewej byl elementem 0 w visibleBuildings
+        var tmp = visibleBuildings
+          for index in 0...visibleBuildings.count
+          {
+            if index == 0
             {
-                distanceFromCenter = distanceFromCenter +  Double(element.frame.width)
+                visibleBuildings[index] = building
             }
-            print("Visible frame min \(visibleBuildings[0].frame.minX)")
-            print("Srodek \(self.view.bounds.width * 1.5)")
-            var krawedzPrawychLubSrodek = self.view.bounds.width * 1.5
-            if(visibleBuildings.count > 0)
+            else if (index < visibleBuildings.count )
             {
-                krawedzPrawychLubSrodek = visibleBuildings[0].frame.minX
+                visibleBuildings[index] = tmp[index-1]
             }
-
-          building.center = CGPoint(x: krawedzPrawychLubSrodek - (building.frame.width/2) - CGFloat(distanceFromCenter), y: self.view.bounds.height - (building.frame.height/2))
-            buildingsOnTheLeft.append(building)
+            else
+            {
+                visibleBuildings.append(tmp[index-1])
+            }
+          }
+            
+            
+            
+            
+//            var distanceFromCenter = 0.0
+//            for element in buildingsOnTheLeft
+//            {
+//                distanceFromCenter = distanceFromCenter +  Double(element.frame.width)
+//            }
+//            print("Visible frame min \(visibleBuildings[0].frame.minX)")
+//            print("Srodek \(self.view.bounds.width * 1.5)")
+//            var krawedzPrawychLubSrodek = self.view.bounds.width * 1.5
+//            if(visibleBuildings.count > 0)
+//            {
+//                krawedzPrawychLubSrodek = visibleBuildings[0].frame.minX
+//            }
+//
+//          building.center = CGPoint(x: krawedzPrawychLubSrodek - (building.frame.width/2) - CGFloat(distanceFromCenter), y: self.view.bounds.height - (building.frame.height/2))
+//            buildingsOnTheLeft.append(building)
+//            
         }
         scrollView.addSubview(building)
     }
@@ -101,7 +124,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
 //            print("Ostatni usuniety")
 //        }
             
-            if true {
+            if false {
            var firstBuildingWidth = visibleBuildings[0].frame.width
             if scrollView.contentOffset.x >= self.view.bounds.width * 1.5 + firstBuildingWidth
             {
@@ -115,7 +138,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             scrollView.contentOffset.x = self.view.bounds.width * 1.5
             }
             }
-            
+            addNewBuilding(side: "Left")
 
             
             
