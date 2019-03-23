@@ -96,6 +96,19 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             scrollView.contentOffset.x = self.view.bounds.width * 1.5
             }
             }
+            var lastBuildingWidth = visibleBuildings.last!.frame.width
+            if scrollView.contentOffset.x <= self.view.bounds.width * 1.5 - lastBuildingWidth
+            {
+                addNewBuilding(side: "Left")
+                visibleBuildings.last!.removeFromSuperview()
+                visibleBuildings.removeLast()
+                for building in visibleBuildings
+                {
+                    building.center.x = building.center.x + lastBuildingWidth
+                }
+                scrollView.contentOffset.x = self.view.bounds.width * 1.5
+            }
+        }
             //addNewBuilding(side: "Left")
 
             
@@ -113,5 +126,5 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-}
+
 
